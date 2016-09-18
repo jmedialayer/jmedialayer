@@ -92,17 +92,12 @@ public class BrowserBackend extends Backend {
 	}
 
 	public void draw_pixels(int x, int y, int[] colors, int width, int height) {
-		Js.v_raw("var data = this.ctx.createImageData(p3, p4);");
+		Js.v_raw("var x = p0, y = p1, colors = p2, width = p3, height = p4;");
+		Js.v_raw("var data = this.ctx.createImageData(width, height);");
 		Js.v_raw("var dd = data.data;");
-		Js.v_raw("var area = p3 * p4;");
-		Js.v_raw("for (var n = 0, m = 0; n < area; n++) {");
-		Js.v_raw("	var c = p2.data[n];");
-		Js.v_raw("	dd[m++] = (c >> 0) & 0xFF;");
-		Js.v_raw("	dd[m++] = (c >> 8) & 0xFF;");
-		Js.v_raw("	dd[m++] = (c >> 16) & 0xFF;");
-		Js.v_raw("	dd[m++] = (c >> 24) & 0xFF;");
-		Js.v_raw("}");
-		Js.v_raw("this.ctx.putImageData(data, p0, p1);");
+		Js.v_raw("var area = width * height;");
+		Js.v_raw("(new Int32Array(dd.buffer)).set(colors.data);");
+		Js.v_raw("this.ctx.putImageData(data, x, y);");
 	}
 
 	@Override
