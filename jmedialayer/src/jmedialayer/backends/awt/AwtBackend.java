@@ -3,6 +3,8 @@ package jmedialayer.backends.awt;
 import jmedialayer.backends.Backend;
 import jmedialayer.graphics.Bitmap32;
 import jmedialayer.graphics.G1;
+import jmedialayer.input.Input;
+import jmedialayer.input.Keys;
 
 import javax.swing.*;
 import java.awt.*;
@@ -85,20 +87,43 @@ public class AwtBackend extends Backend {
 		return new G1() {
 			@Override
 			public void updateBitmap(Bitmap32 bmp) {
-				int minwidth = Math.min(bmp.width, width);
-				int minheight = Math.min(bmp.height, height);
-				int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+				final int minwidth = Math.min(bmp.width, width);
+				final int minheight = Math.min(bmp.height, height);
+				final int image_width = image.getWidth();
+				final int[] bmp_data = bmp.data;
+				final int bmp_width = bmp.width;
+				final int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+				int ioffset = 0;
+				int ooffset = 0;
 
 				for (int y = 0; y < minheight; y++) {
-					int ioffset = bmp.index(0, y);
-					int ooffset = y * width;
-					for (int x = 0; x < minwidth; x++) {
-						data[ooffset + x] = rgbaToBgra(bmp.data[ioffset + x]);
-					}
+					for (int x = 0; x < minwidth; x++) data[ooffset + x] = rgbaToBgra(bmp_data[ioffset + x]);
+					ioffset += bmp_width;
+					ooffset += image_width;
 				}
 
 				frontg.drawImage(image, 0, 0, null);
 				frame.repaint();
+			}
+		};
+	}
+
+	@Override
+	protected Input createInput() {
+		return new Input() {
+			@Override
+			public boolean isPressing(Keys key) {
+				switch (key) {
+					case UP:
+						return keys[KeyEvent.VK_UP];
+					case DOWN:
+						return keys[KeyEvent.VK_DOWN];
+					case LEFT:
+						return keys[KeyEvent.VK_LEFT];
+					case RIGHT:
+						return keys[KeyEvent.VK_RIGHT];
+				}
+				return false;
 			}
 		};
 	}

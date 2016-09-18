@@ -1,5 +1,7 @@
 package jmedialayer.graphics;
 
+import java.util.Arrays;
+
 final public class Bitmap8 extends Bitmap {
 	public final byte[] data;
 	public int[] palette;
@@ -16,6 +18,15 @@ final public class Bitmap8 extends Bitmap {
 
 	public Bitmap8(int width, int height) {
 		this(width, height, new byte[width * height], new int[0x100]);
+	}
+
+	@Override public Object getRawData() {
+		return data;
+	}
+
+	@Override
+	protected void fill(int from, int to, int value) {
+		Arrays.fill(data, from, to, (byte)value);
 	}
 
 	public int locateColor(int color) {

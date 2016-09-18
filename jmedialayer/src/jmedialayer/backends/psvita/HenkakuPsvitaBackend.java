@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 	"#define align_mem(addr, align) (((addr) + ((align) - 1)) & ~((align) - 1))",
 	"static SceDisplayFrameBuf fb[2];",
 	"static int cur_fb = 0;",
+	"static SceCtrlData pad = {0};",
+	"static SceTouchData touch = {0};",
 })
 @JTranscAddLibraries(target = "cpp", value = {
 	//"jpeg",
@@ -194,8 +196,29 @@ public class HenkakuPsvitaBackend extends Backend {
 	@Override
 	protected Input createInput() {
 		return new Input() {
+			private final int PSP2_CTRL_SELECT = 1 << 0;
+			private final int PSP2_CTRL_START = 1 << 3;
+			private final int PSP2_CTRL_UP = 1 << 4;
+			private final int PSP2_CTRL_RIGHT = 1 << 5;
+			private final int PSP2_CTRL_DOWN = 1 << 6;
+			private final int PSP2_CTRL_LEFT = 1 << 7;
+			private final int PSP2_CTRL_LTRIGGER = 1 << 8;
+			private final int PSP2_CTRL_RTRIGGER = 1 << 9;
+			private final int PSP2_CTRL_TRIANGLE = 1 << 12;
+			private final int PSP2_CTRL_CIRCLE = 1 << 13;
+			private final int PSP2_CTRL_CROSS = 1 << 14;
+			private final int PSP2_CTRL_SQUARE = 1 << 15;
+			private final int PSP2_CTRL_ANY = 1 << 16;
+
 			@Override
 			public boolean isPressing(Keys key) {
+				int buttons = getButtons();
+				switch (key) {
+					case UP: return (buttons & PSP2_CTRL_UP) != 0;
+					case DOWN: return (buttons & PSP2_CTRL_DOWN) != 0;
+					case LEFT: return (buttons & PSP2_CTRL_LEFT) != 0;
+					case RIGHT: return (buttons & PSP2_CTRL_RIGHT) != 0;
+				}
 				return false;
 			}
 		};
@@ -204,6 +227,7 @@ public class HenkakuPsvitaBackend extends Backend {
 	@Override
 	protected void preStep() {
 		super.preStep();
+		input_read();
 	}
 
 	@Override
@@ -246,6 +270,15 @@ public class HenkakuPsvitaBackend extends Backend {
 		Cpp.v_raw("ret = sceKernelGetMemBlockBase(uid, &mem);");
 		Cpp.v_raw("ret = sceGxmMapMemory(mem, size, SCE_GXM_MEMORY_ATTRIB_RW);");
 		return Cpp.i_raw("(int32_t)mem");
+	}
+
+	static private void input_read() {
+		Cpp.v_raw("sceCtrlPeekBufferPositive(0, &pad, 1);");
+		Cpp.v_raw("sceTouchPeek(0, &touch, 1);");
+	}
+
+	static private int getButtons() {
+		return Cpp.i_raw("pad.buttons");
 	}
 
 	static private int getCurrentBufferStart() {
