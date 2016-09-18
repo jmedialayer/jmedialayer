@@ -9,13 +9,10 @@ import jmedialayer.graphics.G1;
 import jmedialayer.imaging.ImageFormats;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
-import jmedialayer.resource.ResourceLoader;
 import jmedialayer.util.FileUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
 
@@ -84,16 +81,17 @@ public class Backend {
 		return FileUtils.read(new File(url.getFile()));
 	}
 
-	public ResourceLoader<Bitmap32> loadBitmap32(String path) {
+	protected final ResourcePromise<Bitmap32> _loadBitmap32Sync(String path) {
 		try {
 			Bitmap bmp = ImageFormats.read(readBytes(path));
-			ResourceLoader<Bitmap32> rl = new ResourceLoader<>(path);
-			rl.loaded = true;
-			rl.result = bmp.toBitmap32();
-			return rl;
+			return ResourcePromise.resolved(bmp.toBitmap32());
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public ResourcePromise<Bitmap32> loadBitmap32(String path) {
+		throw new RuntimeException("Must override loadBitmap32");
 	}
 
 	protected void waitNextFrame() {

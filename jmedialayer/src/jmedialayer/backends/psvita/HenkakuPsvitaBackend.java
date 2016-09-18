@@ -10,6 +10,7 @@ import jmedialayer.graphics.Bitmap32;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
+import jmedialayer.backends.ResourcePromise;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -217,11 +218,16 @@ public class HenkakuPsvitaBackend extends Backend {
 			public boolean isPressing(Keys key) {
 				int buttons = getButtons();
 				switch (key) {
-					case UP: return (buttons & PSP2_CTRL_UP) != 0;
-					case DOWN: return (buttons & PSP2_CTRL_DOWN) != 0;
-					case LEFT: return (buttons & PSP2_CTRL_LEFT) != 0;
-					case RIGHT: return (buttons & PSP2_CTRL_RIGHT) != 0;
-					case START: return (buttons & PSP2_CTRL_START) != 0;
+					case UP:
+						return (buttons & PSP2_CTRL_UP) != 0;
+					case DOWN:
+						return (buttons & PSP2_CTRL_DOWN) != 0;
+					case LEFT:
+						return (buttons & PSP2_CTRL_LEFT) != 0;
+					case RIGHT:
+						return (buttons & PSP2_CTRL_RIGHT) != 0;
+					case START:
+						return (buttons & PSP2_CTRL_START) != 0;
 				}
 				return false;
 			}
@@ -296,6 +302,11 @@ public class HenkakuPsvitaBackend extends Backend {
 	@Override
 	protected byte[] readBytes(String path) throws IOException {
 		return JTranscIoTools.readFile(new File("app0:/" + path));
+	}
+
+	@Override
+	public ResourcePromise<Bitmap32> loadBitmap32(String path) {
+		return _loadBitmap32Sync(path);
 	}
 }
 

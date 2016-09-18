@@ -1,6 +1,7 @@
 package jmedialayer.backends.awt;
 
 import jmedialayer.backends.Backend;
+import jmedialayer.backends.ResourcePromise;
 import jmedialayer.graphics.Bitmap32;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
@@ -144,5 +145,10 @@ public class AwtBackend extends Backend {
 	protected void preEnd() {
 		frame.setVisible(false);
 		frame.dispose();
+	}
+
+	@Override
+	public ResourcePromise<Bitmap32> loadBitmap32(String path) {
+		return _loadBitmap32Sync(path);
 	}
 }

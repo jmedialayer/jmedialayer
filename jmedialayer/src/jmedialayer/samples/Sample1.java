@@ -7,7 +7,7 @@ import jmedialayer.graphics.EmbeddedFont;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
-import jmedialayer.resource.ResourceLoader;
+import jmedialayer.backends.ResourcePromise;
 
 @SuppressWarnings("Convert2Lambda")
 public class Sample1 {
@@ -22,13 +22,15 @@ public class Sample1 {
 		final int[] x = {0};
 		final int[] y = {0};
 
-		final ResourceLoader<Bitmap32> bmp = backend.loadBitmap32("test.png");
+		final ResourcePromise<Bitmap32> bmp = backend.loadBitmap32("test.png");
 
 		backend.loop(new Backend.StepHandler() {
 			public void step(int dtMs) {
 				back.clear(0xFFFF0000 + (frame[0] / 10));
 				back.fillrect(x[0], y[0], 100, 100, 0x7FFFFFFF);
-				back.draw(bmp.result, 200, 300);
+				if (bmp.done) {
+					back.draw(bmp.result, 200, 300);
+				}
 
 				EmbeddedFont.draw(back, 200, 200, "Hello World!");
 

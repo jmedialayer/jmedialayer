@@ -43,12 +43,13 @@ dependencies {
 
 jtransc {
 	treeshaking = true
+	assets = ["assets"]
 }
 
 mainClassName = "jmedialayer.samples.Sample1"
 
 task deleteTemps(type:Delete) {
-	delete 'a.out', 'a.velf', 'eboot.bin', 'param.sfo', "$VPKNAME"
+	delete "${project.distsDir}/a.out", "${project.distsDir}/a.velf", "${project.distsDir}/eboot.bin", "${project.distsDir}/param.sfo", "${project.distsDir}/$VPKNAME"
 }
 
 task buildVitaElf(dependsOn: ['gensrcCpp', 'deleteTemps']) << {
@@ -102,7 +103,7 @@ task buildVita(dependsOn: ['buildVitaVpk'])
 task uploadFtpAlone() << {
 	exec {
 		executable "curl"
-		args "-T", "eboot.bin", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/app/${TITLE_ID}/eboot.bin"
+		args "-T", "${project.distsDir}/eboot.bin", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/app/${TITLE_ID}/eboot.bin"
 	}
 }
 
@@ -110,7 +111,7 @@ task installFtpAlone() << {
 	exec {
 		executable "curl"
 		// DELETE doesn't seems to work. Don't know why
-		args "-T", "$VPKNAME", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/${VPKNAME}", "-Q", "-PROM ux0:/${VPKNAME}"
+		args "-T", "${project.distsDir}/$VPKNAME", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/${VPKNAME}", "-Q", "-PROM ux0:/${VPKNAME}"
 		//args "-T", "$VPKNAME", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/${VPKNAME}", "-Q", "-PROM ux0:/${VPKNAME}", "-Q", "-DELETE ux0:/${VPKNAME}"
 	}
 }
