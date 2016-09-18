@@ -76,6 +76,10 @@ public class AwtBackend extends Backend {
 		return height;
 	}
 
+	static private int rgbaToBgra(int rgba) {
+		return (rgba & 0xFF00FF00) | ((rgba >> 16) & 0xFF) | ((rgba & 0xFF) << 16);
+	}
+
 	@Override
 	protected G1 createG1() {
 		return new G1() {
@@ -86,7 +90,11 @@ public class AwtBackend extends Backend {
 				int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
 				for (int y = 0; y < minheight; y++) {
-					System.arraycopy(bmp.data, bmp.index(0, y), data, y * width, width);
+					int ioffset = bmp.index(0, y);
+					int ooffset = y * width;
+					for (int x = 0; x < minwidth; x++) {
+						data[ooffset + x] = rgbaToBgra(bmp.data[ioffset + x]);
+					}
 				}
 
 				frontg.drawImage(image, 0, 0, null);

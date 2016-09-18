@@ -210,14 +210,14 @@ public class HenkakuPsvitaBackend extends Backend {
 
 	@Override
 	protected void waitNextFrame() {
-		Cpp.v_raw("sceDisplayWaitVblankStart();");
+		Cpp.v_raw("::sceDisplayWaitVblankStart();");
 	}
 
 	@Override
 	protected void preEnd() {
-		Cpp.v_raw("sceGxmUnmapMemory(fb[0].base);");
-		Cpp.v_raw("sceGxmUnmapMemory(fb[1].base);");
-		Cpp.v_raw("sceGxmTerminate();");
+		Cpp.v_raw("::sceGxmUnmapMemory(fb[0].base);");
+		Cpp.v_raw("::sceGxmUnmapMemory(fb[1].base);");
+		Cpp.v_raw("::sceGxmTerminate();");
 	}
 
 	static private void swap_buffers() {

@@ -23,7 +23,7 @@ public class Sample1 {
 					}
 				}
 				g1.updateBitmap(bmp);
-				frame[0]++;
+				frame[0] += dtMs;
 			}
 		});
 	}
