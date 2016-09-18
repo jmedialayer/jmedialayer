@@ -42,10 +42,14 @@ public class Backend {
 			preStep();
 			step.step((int) (current - prev));
 			postStep();
-			JTranscClock.impl.sleep(1000.0 / 60.0);
+			waitNextFrame();
 			prev = current;
 		}
 		preEnd();
+	}
+
+	protected void waitNextFrame() {
+		JTranscClock.impl.sleep(1000.0 / 60.0);
 	}
 
 	protected void preStep() {

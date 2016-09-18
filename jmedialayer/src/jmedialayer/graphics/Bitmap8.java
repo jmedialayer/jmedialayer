@@ -1,8 +1,8 @@
 package jmedialayer.graphics;
 
 final public class Bitmap8 extends Bitmap {
-	private final byte[] data;
-	private int[] palette;
+	public final byte[] data;
+	public int[] palette;
 
 	public Bitmap8(int width, int height, byte[] data, int[] palette) {
 		super(width, height);
@@ -16,18 +16,6 @@ final public class Bitmap8 extends Bitmap {
 
 	public Bitmap8(int width, int height) {
 		this(width, height, new byte[width * height], new int[0x100]);
-	}
-
-	public byte[] getData() {
-		return data;
-	}
-
-	public int[] getPalette() {
-		return palette;
-	}
-
-	public void setPalette(int[] palette) {
-		this.palette = palette;
 	}
 
 	public int locateColor(int color) {

@@ -181,7 +181,7 @@ public class HenkakuPsvitaBackend extends Backend {
 				int minwidth = Math.min(bmp.width, 960);
 				int minheight = Math.min(bmp.height, 544);
 				for (int y = 0; y < minheight; y++) {
-					writeInts(getCurrentBufferStart() + (y * (minwidth * 4)), bmp.getData(), bmp.index(0, y), bmp.width);
+					writeInts(getCurrentBufferStart() + (y * (minwidth * 4)), bmp.data, bmp.index(0, y), bmp.width);
 				}
 			}
 		};
@@ -206,7 +206,10 @@ public class HenkakuPsvitaBackend extends Backend {
 	protected void postStep() {
 		super.postStep();
 		swap_buffers();
+	}
 
+	@Override
+	protected void waitNextFrame() {
 		Cpp.v_raw("sceDisplayWaitVblankStart();");
 	}
 
