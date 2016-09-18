@@ -1,12 +1,20 @@
 package jmedialayer.graphics;
 
-public class Bitmap32 extends Bitmap {
+final public class Bitmap32 extends Bitmap {
     private final int[] data;
 
-    public Bitmap32(int[] data, int width, int height) {
+    public Bitmap32(int width, int height, int[] data) {
         super(width, height);
         this.data = data;
     }
+
+	public Bitmap32(int width, int height) {
+		this(width, height, new int[width * height]);
+	}
+
+    public int[] getData() {
+		return data;
+	}
 
     @Override
     public int get32(int x, int y) {

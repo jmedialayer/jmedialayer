@@ -1,11 +1,31 @@
+buildscript {
+	ext.TITLE_ID="JMELAY000"
+	ext.VITASDK = System.getenv("VITASDK") ?: "C:/dev/psvita"
+	ext.VITAFTP = System.getenv("VITAFTP") ?: "192.168.1.129"
+	ext.NAME = "jmedialayer"
+	ext.VPKNAME = "${NAME}.vpk"
+	ext.jtranscVersion = "0.4.0"
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath "com.jtransc:jtransc-gradle-plugin:$jtranscVersion"
+	}
+}
+
 group 'jmedialayer'
 version '0.1'
 
 apply plugin: 'java'
+apply plugin: "jtransc"
+apply plugin: 'application'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 repositories {
+	mavenLocal()
     mavenCentral()
 }
 
@@ -20,3 +40,61 @@ dependencies {
     compile "com.jtransc:jtransc-rt-core:0.4.0"
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
+
+jtransc {
+	treeshaking = true
+}
+
+mainClassName = "jmedialayer.samples.Sample1"
+
+task deleteTemps(type:Delete) {
+	delete 'a.out', 'a.velf', 'eboot.bin', 'param.sfo', "$VPKNAME"
+}
+
+task buildVita(dependsOn: ['gensrcCpp', 'deleteTemps']) << {
+	exec {
+		executable "$VITASDK/bin/arm-vita-eabi-c++"
+		args (["-Wl,-q", "-O3", "-std=c++0x", "build/jtransc-cpp/program.cpp", "-Iresources/includes", "-Lresources/libs"] + JTRANSC_LIBS.collect { "-l${it}" })
+		println(args)
+	}
+
+	exec {
+		executable "$VITASDK/bin/vita-elf-create"
+		args "a.out", "a.velf"
+	}
+
+	exec {
+		executable "$VITASDK/bin/vita-make-fself"
+		args "-s", "a.velf", "eboot.bin"
+	}
+
+	exec {
+		executable "$VITASDK/bin/vita-mksfoex"
+		args "-s", "TITLE_ID=${TITLE_ID}", "$NAME", "param.sfo"
+	}
+
+	exec {
+		executable "$VITASDK/bin/vita-pack-vpk"
+		//args "-s", "param.sfo", "-b", "eboot.bin", "-a", "resources/icon0.png=sce_sys/icon0.png", "$VPKNAME"
+		args "-s", "param.sfo", "-b", "eboot.bin", "$VPKNAME"
+	}
+}
+
+task uploadFtpAlone() << {
+	exec {
+		executable "curl"
+		args "-T", "eboot.bin", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/app/${TITLE_ID}/eboot.bin"
+	}
+}
+
+task installFtpAlone() << {
+	exec {
+		executable "curl"
+		// DELETE doesn't seems to work. Don't know why
+		args "-T", "$VPKNAME", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/${VPKNAME}", "-Q", "-PROM ux0:/${VPKNAME}"
+		//args "-T", "$VPKNAME", "-u", "any:any", "ftp://${VITAFTP}:1337/ux0:/${VPKNAME}", "-Q", "-PROM ux0:/${VPKNAME}", "-Q", "-DELETE ux0:/${VPKNAME}"
+	}
+}
+
+task uploadFtp(dependsOn: ['buildVita', 'uploadFtpAlone'])
+task installFtp(dependsOn: ['buildVita', 'installFtpAlone'])

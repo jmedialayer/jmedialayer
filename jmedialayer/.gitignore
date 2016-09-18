@@ -2,3 +2,4 @@
 *.iws
 *.iml
 .gradle
+/build/

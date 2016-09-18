@@ -1,0 +1,26 @@
+package jmedialayer.samples;
+
+import jmedialayer.backends.Backend;
+import jmedialayer.backends.psvita.HenkakuPsvitaBackend;
+import jmedialayer.graphics.Bitmap32;
+import jmedialayer.graphics.G1;
+
+public class Sample1 {
+	static public void main(String[] args) {
+		HenkakuPsvitaBackend backend = new HenkakuPsvitaBackend();
+		final Bitmap32 bmp = new Bitmap32(backend.getNativeWidth(), backend.getNativeHeight());
+		final G1 g1 = backend.getG1();
+		final int[] frame = {0};
+		backend.loop(new Backend.StepHandler() {
+			public void step(int dtMs) {
+				for (int y = 0; y < bmp.height; y++) {
+					for (int x = 0; x < bmp.width; x++) {
+						bmp.set(x, y, 0xFFFF0000 + frame[0]);
+					}
+				}
+				g1.updateBitmap(bmp);
+				frame[0]++;
+			}
+		});
+	}
+}

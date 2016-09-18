@@ -1,20 +1,12 @@
 package jmedialayer.graphics;
 
 public class Bitmap {
-    private final int width;
-    private final int height;
+    public final int width;
+	public final int height;
 
     public Bitmap(int width, int height) {
         this.width = width;
         this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public int index(int x, int y) {

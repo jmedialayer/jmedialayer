@@ -2,30 +2,63 @@ package jmedialayer.backends;
 
 import com.jtransc.time.JTranscClock;
 import jmedialayer.graphics.G1;
+import jmedialayer.input.Input;
 
 public class Backend {
-    private G1 g1;
+	private G1 g1;
+	private Input input;
+	protected boolean running = true;
 
-    final public G1 getG1() {
-        if (g1 == null) g1 = createG1();
-        return g1;
-    }
+	public int getNativeWidth() {
+		return 640;
+	}
 
-    protected G1 createG1() {
-        return new G1();
-    }
+	public int getNativeHeight() {
+		return 480;
+	}
 
-    public void loop(StepHandler step) {
-        double prev = JTranscClock.impl.fastTime();
-        while (true) {
-            double current = JTranscClock.impl.fastTime();
-            step.step((int) (current - prev));
-            JTranscClock.impl.sleep(1000.0 / 60.0);
-            prev = current;
-        }
-    }
+	final public G1 getG1() {
+		if (g1 == null) g1 = createG1();
+		return g1;
+	}
 
-    public interface StepHandler {
-        void step(int dtMs);
-    }
+	final public Input getInput() {
+		if (input == null) input = createInput();
+		return input;
+	}
+
+	protected G1 createG1() {
+		return new G1();
+	}
+
+	protected Input createInput() {
+		return new Input();
+	}
+
+	public void loop(StepHandler step) {
+		double prev = JTranscClock.impl.fastTime();
+		while (running) {
+			double current = JTranscClock.impl.fastTime();
+			preStep();
+			step.step((int) (current - prev));
+			postStep();
+			JTranscClock.impl.sleep(1000.0 / 60.0);
+			prev = current;
+		}
+		preEnd();
+	}
+
+	protected void preStep() {
+	}
+
+	protected void postStep() {
+	}
+
+	protected void preEnd() {
+
+	}
+
+	public interface StepHandler {
+		void step(int dtMs);
+	}
 }
