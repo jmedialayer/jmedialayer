@@ -23,6 +23,9 @@ final public class Bitmap32 extends Bitmap {
 	}
 
 	// @TODO: This shouldn't be necessary when jtransc is optimized!
+	// Improved here: https://github.com/jtransc/jtransc/commit/01a9891cfcfc676ffdb81de30820d6321c50359c
+	// Also it is slow probably related to dynamic_cast + using shared_ptr in all fields and not just where required.
+	// But at least filling and copying should be fast. And future jtrnasc version will totally avoid those stuff and will be faster too.
 	@Override
 	@JTranscMethodBody(target = "cpp", value = {
 		"int32_t from = p0;",
