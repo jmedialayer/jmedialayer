@@ -1,6 +1,7 @@
 package jmedialayer.backends.psvita;
 
 import com.jtransc.annotation.*;
+import com.jtransc.io.JTranscIoTools;
 import com.jtransc.io.JTranscSyncIO;
 import com.jtransc.target.Cpp;
 import com.jtransc.time.JTranscClock;
@@ -10,7 +11,9 @@ import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @SuppressWarnings("JavacQuirks")
 @JTranscAddHeader(target = "cpp", value = {
@@ -288,6 +291,11 @@ public class HenkakuPsvitaBackend extends Backend {
 
 	static private void writeInts(int ptr, int[] data, int offset, int count) {
 		Cpp.v_raw("::memcpy((void *)p0, (void *)(GET_OBJECT(JA_I, p1)->getOffsetPtr(p2)), sizeof(int32_t) * p3);");
+	}
+
+	@Override
+	protected byte[] readBytes(String path) throws IOException {
+		return JTranscIoTools.readFile(new File("app0:/" + path));
 	}
 }
 

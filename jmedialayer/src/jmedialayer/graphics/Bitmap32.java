@@ -38,7 +38,11 @@ final public class Bitmap32 extends Bitmap {
 	//})
 	protected void fill(int from, int to, int value) {
 		FastMemInt.selectSRC(this.data);
-		for (int n = from; n < to; n++) FastMemInt.setSRC(n, value);
+		if (RGBA.getA(value) != 0xFF) {
+			for (int n = from; n < to; n++) FastMemInt.setSRC(n, RGBA.mix(FastMemInt.getSRC(n), value));
+		} else {
+			for (int n = from; n < to; n++) FastMemInt.setSRC(n, value);
+		}
 	}
 
 	@Override
@@ -67,19 +71,18 @@ final public class Bitmap32 extends Bitmap {
 	}
 
 	private void putdataMixed(int index, int[] value, int offset, int count) {
-		setMixed(value, offset, this.data, index, count);
+		RGBA.setMixed(value, offset, this.data, index, count);
 	}
 
-	static private void setMixed(int[] src, int srcOffset, int[] dst, int dstOffset, int count) {
-		FastMemInt.selectDST(dst);
-		FastMemInt.selectSRC(src);
-		for (int n = 0; n < count; n++) {
-			FastMemInt.setDST(dstOffset + n, mix(FastMemInt.getDST(dstOffset + n), FastMemInt.getSRC(srcOffset + n)));
-			//FastMemInt.setDST(dstOffset + n, 0xFFFFFFFF);
-		}
+	public void draw(Bitmap32 bmp) {
+		draw(bmp, 0, 0, true);
 	}
 
-	public void put(int x, int y, Bitmap32 bmp, boolean mix) {
+	public void draw(Bitmap32 bmp, int x, int y) {
+		draw(bmp, x, y, true);
+	}
+
+	public void draw(Bitmap32 bmp, int x, int y, boolean mix) {
 		final int[] bmp_data = bmp.data;
 		final int width = bmp.width;
 		final int height = bmp.height;
@@ -99,36 +102,5 @@ final public class Bitmap32 extends Bitmap {
 				putdata(index(left, row), bmp_data, my * width, wcount);
 			}
 		}
-	}
-
-	@JTranscInline
-	static private int getA(int rgba) {
-		return (rgba >>> 24);
-	}
-
-	@JTranscInline
-	static private int packRGB_A(int rgb, int a) {
-		return (rgb & 0xFFFFFF) | (a << 24);
-	}
-
-	@JTranscInline
-	static private int clampFF(int v) {
-		return clamp(v, 0, 0xFF);
-	}
-
-	@JTranscInline
-	static private int blend(int c1, int c2, int factor) {
-		int f1 = 256 - factor;
-		return ((((((c1 & 0xFF00FF) * f1) + ((c2 & 0xFF00FF) * factor)) & 0xFF00FF00) | ((((c1 & 0x00FF00) * f1) + ((c2 & 0x00FF00) * factor)) & 0x00FF0000))) >>> 8;
-	}
-
-	static private int mix(int dst, int src) {
-		int a = getA(src);
-		if (a <= 0) return dst;
-		if (a >= 0xFF) return src;
-		return packRGB_A(
-			blend(dst, src, a * 256 / 255),
-			clampFF(getA(dst) + getA(src))
-		);
 	}
 }

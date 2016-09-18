@@ -1,6 +1,8 @@
 package jmedialayer.graphics;
 
 import com.jtransc.annotation.JTranscInline;
+import jmedialayer.util.FastMemByte;
+import jmedialayer.util.FastMemInt;
 
 public abstract class Bitmap {
 	public final int width;
@@ -57,5 +59,24 @@ public abstract class Bitmap {
 
 	public void clear(int color) {
 		fill(0, area, color);
+	}
+
+	public Bitmap32 toBitmap32() {
+		if (this instanceof Bitmap32) {
+			return (Bitmap32) this;
+		} else if (this instanceof Bitmap8) {
+			Bitmap8 bmp8 = (Bitmap8)this;
+			Bitmap32 out = new Bitmap32(width, height);
+			int area = out.area;
+
+			FastMemByte.selectSRC(bmp8.data);
+			FastMemInt.selectTMP(bmp8.palette);
+			FastMemInt.selectDST(out.data);
+
+			for (int n = 0; n < area; n++) FastMemInt.setDST(n, FastMemInt.getTMP(FastMemByte.getSRC(n) & 0xFF));
+			return out;
+		} else {
+			throw new RuntimeException("Don't know how to handle " + this);
+		}
 	}
 }

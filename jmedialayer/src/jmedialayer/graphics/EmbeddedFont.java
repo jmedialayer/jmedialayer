@@ -83,7 +83,7 @@ public class EmbeddedFont {
 				y += 8;
 			} else {
 				Bitmap32 glyph = glyphs[c];
-				if (glyph != null) out.put(x, y, glyph, true);
+				if (glyph != null) out.draw(glyph, x, y);
 				x += 8;
 			}
 		}

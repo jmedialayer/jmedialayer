@@ -1,13 +1,22 @@
 package jmedialayer.backends;
 
 import com.jtransc.time.JTranscClock;
+import jmedialayer.JMediaLayer;
+import jmedialayer.graphics.Bitmap;
 import jmedialayer.graphics.Bitmap32;
 import jmedialayer.graphics.EmbeddedFont;
 import jmedialayer.graphics.G1;
+import jmedialayer.imaging.ImageFormats;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
-import sun.security.action.GetIntegerAction;
+import jmedialayer.resource.ResourceLoader;
+import jmedialayer.util.FileUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
 
 public class Backend {
@@ -15,12 +24,16 @@ public class Backend {
 	private Input input;
 	protected boolean running = true;
 
+	public String getVersion() {
+		return JMediaLayer.getVersion();
+	}
+
 	public int getNativeWidth() {
-		return 640;
+		return 960;
 	}
 
 	public int getNativeHeight() {
-		return 480;
+		return 544;
 	}
 
 	final public G1 getG1() {
@@ -66,6 +79,23 @@ public class Backend {
 		}
 	}
 
+	protected byte[] readBytes(String path) throws IOException {
+		URL url = Backend.class.getClassLoader().getResource(path);
+		return FileUtils.read(new File(url.getFile()));
+	}
+
+	public ResourceLoader<Bitmap32> loadBitmap32(String path) {
+		try {
+			Bitmap bmp = ImageFormats.read(readBytes(path));
+			ResourceLoader<Bitmap32> rl = new ResourceLoader<>(path);
+			rl.loaded = true;
+			rl.result = bmp.toBitmap32();
+			return rl;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	protected void waitNextFrame() {
 		JTranscClock.impl.sleep(1000.0 / 60.0);
 	}
@@ -77,7 +107,6 @@ public class Backend {
 	}
 
 	protected void preEnd() {
-
 	}
 
 	public interface StepHandler {

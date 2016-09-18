@@ -7,6 +7,7 @@ import jmedialayer.graphics.EmbeddedFont;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
+import jmedialayer.resource.ResourceLoader;
 
 @SuppressWarnings("Convert2Lambda")
 public class Sample1 {
@@ -14,20 +15,24 @@ public class Sample1 {
 		//final Backend backend = new HenkakuPsvitaBackend();
 		//Backend backend = new AwtBackend();
 		final Backend backend = BackendSelector.getDefault();
-		final Bitmap32 bmp = new Bitmap32(backend.getNativeWidth(), backend.getNativeHeight());
+		final Bitmap32 back = new Bitmap32(backend.getNativeWidth(), backend.getNativeHeight());
 		final Input input = backend.getInput();
 		final G1 g1 = backend.getG1();
 		final int[] frame = {0};
 		final int[] x = {0};
 		final int[] y = {0};
+
+		final ResourceLoader<Bitmap32> bmp = backend.loadBitmap32("test.png");
+
 		backend.loop(new Backend.StepHandler() {
 			public void step(int dtMs) {
-				bmp.clear(0xFFFF0000 + (frame[0] / 10));
-				bmp.fillrect(x[0], y[0], 100, 100, 0xFFFFFFFF);
+				back.clear(0xFFFF0000 + (frame[0] / 10));
+				back.fillrect(x[0], y[0], 100, 100, 0x7FFFFFFF);
+				back.draw(bmp.result, 200, 300);
 
-				EmbeddedFont.draw(bmp, 200, 200, "Hello World!");
+				EmbeddedFont.draw(back, 200, 200, "Hello World!");
 
-				g1.updateBitmap(bmp);
+				g1.updateBitmap(back);
 
 				if (input.isPressing(Keys.UP)) y[0]--;
 				if (input.isPressing(Keys.DOWN)) y[0]++;

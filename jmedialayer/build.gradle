@@ -51,34 +51,53 @@ task deleteTemps(type:Delete) {
 	delete 'a.out', 'a.velf', 'eboot.bin', 'param.sfo', "$VPKNAME"
 }
 
-task buildVita(dependsOn: ['gensrcCpp', 'deleteTemps']) << {
+task buildVitaElf(dependsOn: ['gensrcCpp', 'deleteTemps']) << {
 	exec {
 		executable "$VITASDK/bin/arm-vita-eabi-c++"
-		args (["-Wl,-q", "-O3", "-std=c++0x", "build/jtransc-cpp/program.cpp", "-Iresources/includes", "-Lresources/libs"] + JTRANSC_LIBS.collect { "-l${it}" })
+		args (["-Wl,-q", "-o${project.distsDir}/a.out", "-O3", "-std=c++0x", "build/jtransc-cpp/program.cpp", "-Iresources/includes", "-Lresources/libs"] + JTRANSC_LIBS.collect { "-l${it}" })
 		println(args)
 	}
+}
 
+task buildVitaSelf(dependsOn: ['buildVitaElf']) << {
 	exec {
 		executable "$VITASDK/bin/vita-elf-create"
-		args "a.out", "a.velf"
-	}
-
-	exec {
-		executable "$VITASDK/bin/vita-make-fself"
-		args "-s", "a.velf", "eboot.bin"
-	}
-
-	exec {
-		executable "$VITASDK/bin/vita-mksfoex"
-		args "-s", "TITLE_ID=${TITLE_ID}", "$NAME", "param.sfo"
-	}
-
-	exec {
-		executable "$VITASDK/bin/vita-pack-vpk"
-		//args "-s", "param.sfo", "-b", "eboot.bin", "-a", "resources/icon0.png=sce_sys/icon0.png", "$VPKNAME"
-		args "-s", "param.sfo", "-b", "eboot.bin", "$VPKNAME"
+		args "${project.distsDir}/a.out", "${project.distsDir}/a.velf"
 	}
 }
+
+task buildVitaEbootBin(dependsOn: ['buildVitaSelf']) << {
+	exec {
+		executable "$VITASDK/bin/vita-make-fself"
+		args "-s", "${project.distsDir}/a.velf", "${project.distsDir}/eboot.bin"
+	}
+}
+
+task buildVitaParamSfo() << {
+	exec {
+		executable "$VITASDK/bin/vita-mksfoex"
+		args "-s", "TITLE_ID=${TITLE_ID}", "$NAME", "${project.distsDir}/param.sfo"
+	}
+}
+
+task buildVitaVpk(type: Zip, dependsOn: ['buildVitaEbootBin', 'buildVitaParamSfo']) {
+	from("${project.distsDir}/param.sfo") {
+		into '/sce_sys'
+	}
+	from("assets") {
+		into '/'
+	}
+	from("${project.distsDir}/eboot.bin") {
+		into '/'
+	}
+
+	//destinationDir = '.'
+	archiveName = "$VPKNAME"
+	//baseName = 'output.vpk'
+
+}
+
+task buildVita(dependsOn: ['buildVitaVpk'])
 
 task uploadFtpAlone() << {
 	exec {

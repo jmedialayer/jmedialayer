@@ -16,19 +16,19 @@ public class FastMemInt {
 	static private int[] memTMP;
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memSRC = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	@JTranscMethodBody(target = "cpp", value = "int_memSRC = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0); {% SFIELD jmedialayer.util.FastMemInt:memSRC %} = p0;")
 	static public void selectSRC(int[] mem) {
 		FastMemInt.memSRC = mem;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memDST = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	@JTranscMethodBody(target = "cpp", value = "int_memDST = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0); {% SFIELD jmedialayer.util.FastMemInt:memDST %} = p0;")
 	static public void selectDST(int[] mem) {
 		FastMemInt.memDST = mem;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memTMP = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	@JTranscMethodBody(target = "cpp", value = "int_memTMP = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0); {% SFIELD jmedialayer.util.FastMemInt:memTMP %} = p0;")
 	static public void selectTMP(int[] mem) {
 		FastMemInt.memTMP = mem;
 	}
