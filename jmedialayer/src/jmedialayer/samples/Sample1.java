@@ -17,11 +17,7 @@ public class Sample1 {
 		final int[] frame = {0};
 		backend.loop(new Backend.StepHandler() {
 			public void step(int dtMs) {
-				for (int y = 0; y < bmp.height; y++) {
-					for (int x = 0; x < bmp.width; x++) {
-						bmp.set(x, y, 0xFFFF0000 + frame[0]);
-					}
-				}
+				bmp.clear(0xFFFF0000 + frame[0]);
 				g1.updateBitmap(bmp);
 				frame[0] += dtMs;
 			}

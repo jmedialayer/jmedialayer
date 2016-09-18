@@ -1,5 +1,7 @@
 package jmedialayer.graphics;
 
+import java.util.Arrays;
+
 final public class Bitmap32 extends Bitmap {
     public final int[] data;
 
@@ -31,4 +33,8 @@ final public class Bitmap32 extends Bitmap {
     public void set(int x, int y, int value) {
         data[index(x, y)] = value;
     }
+
+    public void clear(int color) {
+		Arrays.fill(data, 0, data.length, color);
+	}
 }

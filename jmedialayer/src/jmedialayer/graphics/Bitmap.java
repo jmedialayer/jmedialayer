@@ -3,10 +3,12 @@ package jmedialayer.graphics;
 public class Bitmap {
     public final int width;
 	public final int height;
+	public final int area;
 
     public Bitmap(int width, int height) {
         this.width = width;
         this.height = height;
+		this.area = width * height;
     }
 
     public int index(int x, int y) {
