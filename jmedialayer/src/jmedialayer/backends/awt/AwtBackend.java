@@ -42,7 +42,9 @@ public class AwtBackend extends Backend {
 
 		JLabel label = new JLabel(new ImageIcon(front));
 		label.setSize(width, height);
+
 		frame.add(label);
+
 		//frame.setSize(width, height);
 		frame.pack();
 		frame.setResizable(false);
@@ -66,6 +68,8 @@ public class AwtBackend extends Backend {
 				keys[e.getKeyCode() & 0x3FF] = false;
 			}
 		});
+
+		frame.getContentPane().setBackground(Color.black);
 	}
 
 	@Override
@@ -102,6 +106,7 @@ public class AwtBackend extends Backend {
 					ooffset += image_width;
 				}
 
+				frontg.setComposite(AlphaComposite.Src);
 				frontg.drawImage(image, 0, 0, null);
 				frame.repaint();
 			}
@@ -122,6 +127,8 @@ public class AwtBackend extends Backend {
 						return keys[KeyEvent.VK_LEFT];
 					case RIGHT:
 						return keys[KeyEvent.VK_RIGHT];
+					case START:
+						return keys[KeyEvent.VK_ENTER];
 				}
 				return false;
 			}

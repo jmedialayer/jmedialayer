@@ -37,8 +37,8 @@ final public class Bitmap32 extends Bitmap {
 	//	"for (int n = from; n < to; n++) ptr[n] = value;",
 	//})
 	protected void fill(int from, int to, int value) {
-		FastMemInt.selectA(this.data);
-		for (int n = from; n < to; n++) FastMemInt.setA(n, value);
+		FastMemInt.selectSRC(this.data);
+		for (int n = from; n < to; n++) FastMemInt.setSRC(n, value);
 	}
 
 	@Override
@@ -71,9 +71,12 @@ final public class Bitmap32 extends Bitmap {
 	}
 
 	static private void setMixed(int[] src, int srcOffset, int[] dst, int dstOffset, int count) {
-		FastMemInt.selectA(src);
-		FastMemInt.selectB(dst);
-		for (int n = 0; n < count; n++) FastMemInt.setA(dstOffset + n, mix(FastMemInt.getA(dstOffset + n), FastMemInt.getB(srcOffset + n)));
+		FastMemInt.selectDST(dst);
+		FastMemInt.selectSRC(src);
+		for (int n = 0; n < count; n++) {
+			FastMemInt.setDST(dstOffset + n, mix(FastMemInt.getDST(dstOffset + n), FastMemInt.getSRC(srcOffset + n)));
+			//FastMemInt.setDST(dstOffset + n, 0xFFFFFFFF);
+		}
 	}
 
 	public void put(int x, int y, Bitmap32 bmp, boolean mix) {
@@ -83,23 +86,24 @@ final public class Bitmap32 extends Bitmap {
 		final int this_width = this.width;
 		final int this_height = this.height;
 
+		int left = clamp(x, 0, this_width);
+		int right = clamp(x + width, 0, this_width);
+		int wcount = right - left;
+
 		for (int my = 0; my < height; my++) {
 			int row = my + y;
 			if (row < 0 || row >= this_height) continue;
-			int left = clamp(x, 0, this_width);
-			int right = clamp(x + width, 0, this_width);
-			int count = right - left;
 			if (mix) {
-				putdataMixed(index(left, row), bmp_data, my * width, count);
+				putdataMixed(index(left, row), bmp_data, my * width, wcount);
 			} else {
-				putdata(index(left, row), bmp_data, my * width, count);
+				putdata(index(left, row), bmp_data, my * width, wcount);
 			}
 		}
 	}
 
 	@JTranscInline
 	static private int getA(int rgba) {
-		return rgba >> 24;
+		return (rgba >>> 24);
 	}
 
 	@JTranscInline

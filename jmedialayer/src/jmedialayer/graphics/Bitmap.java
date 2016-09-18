@@ -1,5 +1,7 @@
 package jmedialayer.graphics;
 
+import com.jtransc.annotation.JTranscInline;
+
 public abstract class Bitmap {
 	public final int width;
 	public final int height;
@@ -15,6 +17,7 @@ public abstract class Bitmap {
 
 	abstract protected void fill(int from, int to, int value);
 
+	@JTranscInline
 	final public int index(int x, int y) {
 		return y * width + x;
 	}
@@ -37,11 +40,11 @@ public abstract class Bitmap {
 		final int this_width = this.width;
 		final int this_height = this.height;
 
+		int left = clamp(x, 0, this_width);
+		int right = clamp(x + width, 0, this_width);
 		for (int my = 0; my < height; my++) {
 			int row = my + y;
 			if (row < 0 || row >= this_height) continue;
-			int left = clamp(x, 0, this_width);
-			int right = clamp(x + width, 0, this_width);
 			fill(index(left, row), index(right, row), color);
 		}
 	}

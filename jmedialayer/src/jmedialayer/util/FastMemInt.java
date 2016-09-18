@@ -6,70 +6,70 @@ import com.jtransc.annotation.JTranscMethodBody;
 
 @SuppressWarnings("JavacQuirks")
 @JTranscAddHeader(target = "cpp", value = {
-	"static int32_t *int_memA = NULL;",
-	"static int32_t *int_memB = NULL;",
-	"static int32_t *int_memC = NULL;",
+	"static int32_t *int_memSRC = NULL;",
+	"static int32_t *int_memDST = NULL;",
+	"static int32_t *int_memTMP = NULL;",
 })
 public class FastMemInt {
-	static private int[] memA;
-	static private int[] memB;
-	static private int[] memC;
+	static private int[] memSRC;
+	static private int[] memDST;
+	static private int[] memTMP;
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memA = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
-	static public void selectA(int[] mem) {
-		FastMemInt.memA = mem;
+	@JTranscMethodBody(target = "cpp", value = "int_memSRC = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	static public void selectSRC(int[] mem) {
+		FastMemInt.memSRC = mem;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memB = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
-	static public void selectB(int[] mem) {
-		FastMemInt.memB = mem;
+	@JTranscMethodBody(target = "cpp", value = "int_memDST = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	static public void selectDST(int[] mem) {
+		FastMemInt.memDST = mem;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memC = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
-	static public void selectC(int[] mem) {
-		FastMemInt.memC = mem;
+	@JTranscMethodBody(target = "cpp", value = "int_memTMP = (int32_t *)GET_OBJECT(JA_I, p0)->getOffsetPtr(0);")
+	static public void selectTMP(int[] mem) {
+		FastMemInt.memTMP = mem;
 	}
 
 	///////////////////////////////////////////////////////////////////////
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memA[p0] = p1;")
-	static public void setA(int index, int value) {
-		FastMemInt.memA[index] = value;
+	@JTranscMethodBody(target = "cpp", value = "int_memSRC[p0] = p1;")
+	static public void setSRC(int index, int value) {
+		FastMemInt.memSRC[index] = value;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memB[p0] = p1;")
-	static public void setB(int index, int value) {
-		FastMemInt.memB[index] = value;
+	@JTranscMethodBody(target = "cpp", value = "int_memDST[p0] = p1;")
+	static public void setDST(int index, int value) {
+		FastMemInt.memDST[index] = value;
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "int_memC[p0] = p1;")
-	static public void setC(int index, int value) {
-		FastMemInt.memC[index] = value;
+	@JTranscMethodBody(target = "cpp", value = "int_memTMP[p0] = p1;")
+	static public void setTMP(int index, int value) {
+		FastMemInt.memTMP[index] = value;
 	}
 
 	/////////////////////////////////////////////////////////////////////////
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "return int_memA[p0];")
-	static public int getA(int index) {
-		return FastMemInt.memA[index];
+	@JTranscMethodBody(target = "cpp", value = "return int_memSRC[p0];")
+	static public int getSRC(int index) {
+		return FastMemInt.memSRC[index];
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "return int_memB[p0];")
-	static public int getB(int index) {
-		return FastMemInt.memB[index];
+	@JTranscMethodBody(target = "cpp", value = "return int_memDST[p0];")
+	static public int getDST(int index) {
+		return FastMemInt.memDST[index];
 	}
 
 	@JTranscInline
-	@JTranscMethodBody(target = "cpp", value = "return int_memC[p0];")
-	static public int getC(int index) {
-		return FastMemInt.memC[index];
+	@JTranscMethodBody(target = "cpp", value = "return int_memTMP[p0];")
+	static public int getTMP(int index) {
+		return FastMemInt.memTMP[index];
 	}
 }

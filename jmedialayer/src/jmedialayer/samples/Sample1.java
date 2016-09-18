@@ -3,6 +3,7 @@ package jmedialayer.samples;
 import jmedialayer.backends.Backend;
 import jmedialayer.backends.BackendSelector;
 import jmedialayer.graphics.Bitmap32;
+import jmedialayer.graphics.EmbeddedFont;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
 import jmedialayer.input.Keys;
@@ -23,6 +24,9 @@ public class Sample1 {
 			public void step(int dtMs) {
 				bmp.clear(0xFFFF0000 + (frame[0] / 10));
 				bmp.fillrect(x[0], y[0], 100, 100, 0xFFFFFFFF);
+
+				EmbeddedFont.draw(bmp, 200, 200, "Hello World!");
+
 				g1.updateBitmap(bmp);
 
 				if (input.isPressing(Keys.UP)) y[0]--;
@@ -31,6 +35,8 @@ public class Sample1 {
 				if (input.isPressing(Keys.RIGHT)) x[0]++;
 
 				frame[0] += dtMs;
+
+				//throw new RuntimeException("My fancy error!");
 			}
 		});
 	}

@@ -1,8 +1,14 @@
 package jmedialayer.backends;
 
 import com.jtransc.time.JTranscClock;
+import jmedialayer.graphics.Bitmap32;
+import jmedialayer.graphics.EmbeddedFont;
 import jmedialayer.graphics.G1;
 import jmedialayer.input.Input;
+import jmedialayer.input.Keys;
+import sun.security.action.GetIntegerAction;
+
+import java.util.Objects;
 
 public class Backend {
 	private G1 g1;
@@ -37,15 +43,27 @@ public class Backend {
 
 	public void loop(StepHandler step) {
 		double prev = JTranscClock.impl.fastTime();
-		while (running) {
-			double current = JTranscClock.impl.fastTime();
-			preStep();
-			step.step((int) (current - prev));
+		try {
+			while (running) {
+				double current = JTranscClock.impl.fastTime();
+				preStep();
+				step.step((int) (current - prev));
+				postStep();
+				waitNextFrame();
+				prev = current;
+			}
+		} catch (Throwable t) {
+			Bitmap32 errorBuffer = new Bitmap32(getNativeWidth(), getNativeHeight());
+			errorBuffer.clear(0);
+			EmbeddedFont.draw(errorBuffer, 0, 0, Objects.toString(t));
+			g1.updateBitmap(errorBuffer);
 			postStep();
-			waitNextFrame();
-			prev = current;
+			while (!getInput().isPressing(Keys.START)) {
+				waitNextFrame();
+			}
+		} finally {
+			preEnd();
 		}
-		preEnd();
 	}
 
 	protected void waitNextFrame() {

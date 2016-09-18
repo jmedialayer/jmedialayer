@@ -75,7 +75,7 @@ public class BrowserBackend extends Backend {
 
 	private Keys convertToKeys(int keyCode) {
 		switch (keyCode) {
-			//case 13: return PSP2_CTRL_START; // RETURN
+			case 13: return Keys.START; // RETURN
 			//case 32: return PSP2_CTRL_SELECT; // SPACE
 			case 37: return Keys.LEFT; // LEFT
 			case 38: return Keys.UP; // UP

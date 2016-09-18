@@ -218,6 +218,7 @@ public class HenkakuPsvitaBackend extends Backend {
 					case DOWN: return (buttons & PSP2_CTRL_DOWN) != 0;
 					case LEFT: return (buttons & PSP2_CTRL_LEFT) != 0;
 					case RIGHT: return (buttons & PSP2_CTRL_RIGHT) != 0;
+					case START: return (buttons & PSP2_CTRL_START) != 0;
 				}
 				return false;
 			}
