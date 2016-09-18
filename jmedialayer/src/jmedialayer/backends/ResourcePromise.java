@@ -1,17 +1,18 @@
 package jmedialayer.backends;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ResourcePromise<T> {
 	public boolean done = false;
 	public T result;
-	private ArrayList<Handler<T>> handlers = new ArrayList<>();
+	private Handler<T>[] handlers = new Handler[0];
 
 	public void then(Handler<T> handler) {
 		if (done) {
 			handler.handle(result);
 		} else {
-			handlers.add(handler);
+			handlers = Arrays.copyOf(handlers, handlers.length + 1);
+			handlers[handlers.length - 1] = handler;
 		}
 	}
 
@@ -19,10 +20,12 @@ public class ResourcePromise<T> {
 		if (!done) {
 			this.result = result;
 			this.done = true;
-			for (Handler<T> handler : handlers) {
-				handler.handle(result);
+			if (handlers.length > 0) {
+				for (Handler<T> handler : handlers) {
+					handler.handle(result);
+				}
+				handlers = new Handler[0];
 			}
-			handlers.clear();
 		}
 		return this;
 	}
