@@ -1,8 +1,10 @@
 package jmedialayer.graphics;
 
+import com.jtransc.annotation.JTranscMethodBody;
+
 import java.util.Arrays;
 
-@SuppressWarnings("UnnecessaryLocalVariable")
+@SuppressWarnings({"UnnecessaryLocalVariable", "JavacQuirks"})
 final public class Bitmap32 extends Bitmap {
 	public final int[] data;
 
@@ -20,7 +22,15 @@ final public class Bitmap32 extends Bitmap {
 		return data;
 	}
 
+	// @TODO: This shouldn't be necessary when jtransc is optimized!
 	@Override
+	@JTranscMethodBody(target = "cpp", value = {
+		"int32_t from = p0;",
+		"int32_t to = p1;",
+		"int32_t value = p2;",
+		"int32_t *ptr = (int32_t *)GET_OBJECT(JA_I, this->{% FIELD jmedialayer.graphics.Bitmap32:data %})->getOffsetPtr(0);",
+		"for (int n = from; n < to; n++) ptr[n] = value;",
+	})
 	protected void fill(int from, int to, int value) {
 		Arrays.fill(data, from, to, value);
 	}
@@ -43,9 +53,5 @@ final public class Bitmap32 extends Bitmap {
 	@Override
 	public void set(int x, int y, int value) {
 		data[index(x, y)] = value;
-	}
-
-	public void clear(int color) {
-		Arrays.fill(data, 0, data.length, color);
 	}
 }

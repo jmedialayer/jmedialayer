@@ -53,4 +53,8 @@ public abstract class Bitmap {
 		if (v > max) return max;
 		return v;
 	}
+
+	public void clear(int color) {
+		fill(0, area, color);
+	}
 }
