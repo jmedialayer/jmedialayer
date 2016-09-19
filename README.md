@@ -9,6 +9,51 @@ The idea is to create layers. An initial layer will provide functionality to han
 An posterior layer will provide accelerated 2d graphics.
 And a final layer will provide 3d accelerated graphics with shader support.
 
+## Usage
+
+You can find a complete example here: https://github.com/soywiz/psvita-java/tree/master/demo3
+
+```groovy
+buildscript {
+	repositories {
+		mavenLocal()
+		maven { url "http://dl.bintray.com/soywiz/jmedialayer" }
+		mavenCentral()
+	}
+	dependencies {
+		classpath "com.jtransc:jtransc-gradle-plugin:$jtranscVersion"
+		classpath "jmedialayer:jmedialayer-gradle-plugin:0.1"
+	}
+}
+
+apply plugin: 'java'
+apply plugin: "jtransc"
+apply plugin: 'application'
+apply plugin: 'jmedialayer'
+
+repositories {
+	mavenLocal()
+	maven { url "http://dl.bintray.com/soywiz/jmedialayer" }
+	mavenCentral()
+}
+
+dependencies {
+	compile "jmedialayer:jmedialayer:0.1"
+}
+
+jtransc {
+	treeshaking = true
+	assets = ["assets"]
+}
+
+jmedialayer {
+	//vitaFtp = "192.168.1.130"
+	//vitaSdk = "c:/dev/vitasdk"
+	name = rootProject.name
+	titleId = "SOYWIZ003" // 9 characters
+}
+```
+
 ## Performance
 
 Even when there are no GC pauses, the raw performance is not perfect. Right now there are lots of `dynamic_cast` involved in jtransc + unnecessary shared_ptr boxing. This will improve in the future without touching any code.
