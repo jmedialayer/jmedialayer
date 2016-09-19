@@ -21,13 +21,11 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "com.jtransc:jtransc-gradle-plugin:$jtranscVersion"
 		classpath "jmedialayer:jmedialayer-gradle-plugin:0.1"
 	}
 }
 
 apply plugin: 'java'
-apply plugin: "jtransc"
 apply plugin: 'application'
 apply plugin: 'jmedialayer'
 
