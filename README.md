@@ -9,9 +9,9 @@ And a final layer will provide 3d accelerated graphics with shader support.
 
 ## Performance
 
-Even when there is no GC pauses, the raw performance is not perfect. Right now there are lots of `dynamic_cast` involved in jtransc + unnecessary shared_ptr boxing. This will improve in the future.
+Even when there are no GC pauses, the raw performance is not perfect. Right now there are lots of `dynamic_cast` involved in jtransc + unnecessary shared_ptr boxing. This will improve in the future without touching any code.
 
-In order to optimize critical parts, you can embed C++ code directly. Or use `FastMemByte` and `FastMemInt` classes. Those classes provide static methods to select and use raw pointers directly. Once selected an array, set and get calls just use integers so when no objects/arrays are referenced at all, the performance is as fast as C++ code. So on blitting and stuff, you can just select an array and use integer indices during the algorithm to get the best performance.
+In the meanwhile, in order to optimize critical parts, you can embed C++ code directly. Or use `FastMemByte` and `FastMemInt` classes. Those classes provide static methods to select and use raw pointers directly. Once selected an array, set and get calls just use integers so when no objects/arrays are referenced at all, the performance is as fast as C++ code. So on blitting and stuff, you can just select an array and use integer indices during the algorithm to get the best performance.
 
 https://github.com/jmedialayer/jmedialayer/blob/master/jmedialayer/src/jmedialayer/util/FastMemInt.java
 https://github.com/jmedialayer/jmedialayer/blob/master/jmedialayer/src/jmedialayer/util/FastMemByte.java
