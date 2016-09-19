@@ -1,5 +1,7 @@
 # jmedialayer
 
+![](screenshot.jpg)
+
 A Java Library similar to SDL that works with [JTransc](http://blog.jtransc.com/) to build native applications that work everywhere,
 including browser and homebrew platforms like psvita and 3ds.
 
