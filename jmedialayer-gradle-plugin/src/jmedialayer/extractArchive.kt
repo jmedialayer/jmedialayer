@@ -7,13 +7,17 @@ import org.codehaus.plexus.archiver.zip.ZipUnArchiver
 import java.io.File
 
 fun extractArchive(archive: File, outputFolder: File) {
-	if (archive.path.toLowerCase().endsWith(".zip")) {
-		ZipUnArchiver(archive).extract("", outputFolder)
+	val unarchiver = if (archive.path.toLowerCase().endsWith(".zip")) {
+		ZipUnArchiver()
 	} else if (archive.path.toLowerCase().endsWith(".tar.gz")) {
-		TarGZipUnArchiver(archive).extract("", outputFolder)
+		TarGZipUnArchiver()
 	} else if (archive.path.toLowerCase().endsWith(".tar.bz2")) {
-		TarBZip2UnArchiver(archive).extract("", outputFolder)
+		TarBZip2UnArchiver()
 	} else {
 		invalidOp("Don't know how to extract $archive to $outputFolder")
 	}
+
+	unarchiver.sourceFile = archive
+	unarchiver.destDirectory = outputFolder
+	unarchiver.extract()
 }
