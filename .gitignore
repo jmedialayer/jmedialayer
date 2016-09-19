@@ -1,3 +1,8 @@
+*.iws
+*.ipr
+*.iml
+.idea
+.gradle
 jmedialayer/a.out
 jmedialayer/a.velf
 jmedialayer/eboot.bin

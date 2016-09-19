@@ -5,6 +5,7 @@ buildscript {
 	ext.NAME = "jmedialayer"
 	ext.VPKNAME = "${NAME}.vpk"
 	ext.jtranscVersion = "0.4.0"
+
 	repositories {
 		mavenLocal()
 		mavenCentral()
@@ -105,7 +106,6 @@ task buildVitaVpk(type: Zip, dependsOn: ['buildVitaEbootBin', 'buildVitaParamSfo
 	//destinationDir = '.'
 	archiveName = "$VPKNAME"
 	//baseName = 'output.vpk'
-
 }
 
 task buildVita(dependsOn: ['buildVitaVpk'])
@@ -141,9 +141,13 @@ publishing {
 }
 
 bintray {
-	user = System.getenv('BINTRAY_USER')
-	key = System.getenv('BINTRAY_KEY')
+	Properties bintray = new Properties()
+	bintray.load(new FileInputStream(System.getProperty("user.home") + "/.bintray.properties"))
+
+	user = bintray.BINTRAY_USER
+	key = bintray.BINTRAY_KEY
 	publications = ['MyPublication']
+	override = true
 
 	pkg {
 		repo = 'jmedialayer'

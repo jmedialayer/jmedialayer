@@ -2,3 +2,6 @@
 *.iws
 *.iml
 .gradle
+.idea
+/build
+/classes

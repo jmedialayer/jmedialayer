@@ -23,6 +23,7 @@ public class Sample1 {
 		final int[] y = {0};
 
 		final ResourcePromise<Bitmap32> bmp = backend.loadBitmap32("test.png");
+		final ResourcePromise<Bitmap32> bmp2 = backend.loadBitmap32("icon0.png");
 
 		backend.loop(new Backend.StepHandler() {
 			public void step(int dtMs) {
@@ -30,6 +31,9 @@ public class Sample1 {
 				back.fillrect(x[0], y[0], 100, 100, 0x7FFFFFFF);
 				if (bmp.done) {
 					back.draw(bmp.result, 200, 300);
+				}
+				if (bmp2.done) {
+					back.draw(bmp2.result, 200 + 128, 300);
 				}
 
 				EmbeddedFont.draw(back, 200, 200, "Hello World!");

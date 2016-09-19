@@ -11,8 +11,10 @@ import jmedialayer.graphics.RGBA;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.zip.InflaterInputStream;
 
+@SuppressWarnings({"PointlessBitwiseExpression", "PointlessArithmeticExpression"})
 public class PNG extends ImageFormat {
 	static private final int MAGIC1 = 0x89504E47;
 	static private final int MAGIC2 = 0x0D0A1A0A;
@@ -44,14 +46,16 @@ public class PNG extends ImageFormat {
 		RAStream s = new RAByteArray(data);
 		s.skip(8L);
 		Header h = new Header();
-		int[] palette = null;
+		int[] palette = new int[0];
 
 		ByteArrayOutputStream compressed = new ByteArrayOutputStream();
 
+		System.out.println("---");
 		mainloop:
 		while (s.getAvailable() > 0L) {
 			Chunk chunk = readChunk(s);
 			RAStream ss = new RAByteArray(chunk.data);
+			System.out.println(chunk.type);
 			switch (chunk.type) {
 				case "IHDR": {
 					h.width = ss.readS32_BE();
@@ -64,12 +68,18 @@ public class PNG extends ImageFormat {
 					break;
 				}
 				case "PLTE": {
-					int pcount = (int) ((ss.length() / 3));
-					palette = new int[pcount];
-					for (int n = 0; n < pcount; n++) palette[n] = ss.readS32_BE();
+					palette = Arrays.copyOf(palette, (int)ss.length() / 3);
+					for (int n = 0; n < palette.length; n++) {
+						int r = ss.readU8_LE();
+						int g = ss.readU8_LE();
+						int b = ss.readU8_LE();
+						int a = 0xFF;
+						palette[n] = (r << 0) | (g << 8) | (b << 16) | (a << 24);
+					}
 					break;
 				}
 				case "tRNS": {
+					palette = Arrays.copyOf(palette, (int)ss.length() / 1);
 					for (int n = 0; n < palette.length; n++) {
 						palette[n] = (palette[n] & 0xFFFFFF) | (ss.readU8_BE() << 24);
 					}
