@@ -1,17 +1,58 @@
 package jmedialayer
 
+import com.jtransc.JTranscSystem
+import com.jtransc.error.invalidOp
 import org.gradle.api.Project
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
+import java.net.URL
 
 object TargetPsvita {
 	lateinit var project: Project
 
+	fun getVitaSdkDownloadUrl(): URL {
+		return URL(if (JTranscSystem.isMac()) {
+			"https://github.com/jmedialayer/sdks/releases/download/0.1/vitasdk-gcc-4.9-mac-nightly-d0ed690c623673055a63de3210812490644b4170.tar.bz2"
+		} else if (JTranscSystem.isLinux()) {
+			"https://github.com/jmedialayer/sdks/releases/download/0.1/vitasdk-gcc-4.9-linux-nightly-752d75fd59b15a6d75e4b2af5db1654a675dddcf.tar.bz2"
+		} else if (JTranscSystem.isWindows()) {
+			"https://github.com/jmedialayer/sdks/releases/download/0.1/vitasdk-gcc-4.9-win32-nightly-752d75fd59b15a6d75e4b2af5db1654a675dddcf.zip"
+		} else {
+			invalidOp("Unknown operating system ${JTranscSystem.getOS()}")
+		})
+	}
+
+	val jmedialayerPrivateDir: File by lazy { File(System.getProperty("user.home") + "/.jmedialayer").apply { mkdirs() } }
+	val jmedialayerPrivateSdkDir: File by lazy { File(jmedialayerPrivateDir, "vitasdk").apply { mkdirs() } }
+
 	val distsDir: File get() = project.properties["distsDir"] as File
 	val JTRANSC_LIBS: List<String> get() = project.properties["JTRANSC_LIBS"] as List<String>
 	val extension: JMediaLayerExtension? get() = project.getIfExists<JMediaLayerExtension>(JMediaLayerExtension.NAME)
-	val VITAFTP: String get() = extension?.vitaFtp ?: System.getenv("VITAFTP") ?: "192.168.1.130"
-	val VITASDK: String get() = extension?.vitaSdk ?: System.getenv("VITASDK") ?: "c:/dev/psvita"
+	val VITAFTP: String by lazy {
+		extension?.vitaFtp ?: System.getenv("VITAFTP") ?: "192.168.1.130"
+	}
+	val VITASDK: String by lazy {
+		val defined = extension?.vitaSdk ?: System.getenv("VITASDK") ?: "c:/dev/psvita"
+
+		if (!File("$defined/arm-vita-eabi/lib/libc.a").exists()) {
+			val url = getVitaSdkDownloadUrl()
+			val localfile = File(jmedialayerPrivateDir, File(url.file).name)
+			if (!localfile.exists()) {
+				println("Downloading sdk $url -> $localfile...")
+				url.openStream().use { urls ->
+					FileOutputStream(localfile).use { oss ->
+						urls.copyTo(oss)
+					}
+				}
+				println("Extracting $localfile...")
+				extractArchive(localfile, jmedialayerPrivateSdkDir)
+			}
+			jmedialayerPrivateSdkDir.absolutePath
+		} else {
+			defined
+		}
+	}
 	val NAME: String get() = extension?.name ?: "TEST"
 	val VPKNAME: String get() = "$NAME.vpk"
 	val TITLE_ID: String get() = extension?.titleId ?: "TITLE0000"
@@ -104,6 +145,7 @@ object TargetPsvita {
 		project.addTask("vitaUploadFtp", dependsOn = listOf("buildVita", "vitaUploadFtpAlone"))
 		project.addTask("vitaInstallFtp", dependsOn = listOf("buildVita", "vitaInstallFtpAlone"))
 	}
+
 }
 
 fun InputStream.readAvailableChunk(): ByteArray {
