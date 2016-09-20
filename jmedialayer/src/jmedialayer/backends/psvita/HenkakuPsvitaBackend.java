@@ -183,6 +183,8 @@ public class HenkakuPsvitaBackend extends Backend {
 		return new G1() {
 			@Override
 			public void updateBitmap(Bitmap32 bmp) {
+				updated = true;
+
 				//Cpp.v_raw("memset(fb[cur_fb].base, 0xFF, SCREEN_W*SCREEN_H*4);");
 				if (bmp.width == WIDTH && bmp.height == HEIGHT) {
 					writeInts(getCurrentBufferStart(), bmp.data, 0, bmp.area);
@@ -190,7 +192,7 @@ public class HenkakuPsvitaBackend extends Backend {
 					int minwidth = Math.min(bmp.width, WIDTH);
 					int minheight = Math.min(bmp.height, HEIGHT);
 					for (int y = 0; y < minheight; y++) {
-						writeInts(getCurrentBufferStart() + (y * (WIDTH * 4)), bmp.data, bmp.index(0, y), bmp.width);
+						writeInts(getCurrentBufferStart() + (y * (WIDTH * 4)), bmp.data, bmp.index(0, y), minwidth);
 					}
 				}
 			}
@@ -240,10 +242,15 @@ public class HenkakuPsvitaBackend extends Backend {
 		input_read();
 	}
 
+	private boolean updated = false;
+
 	@Override
 	protected void postStep() {
 		super.postStep();
-		swap_buffers();
+		if (updated) {
+			updated = false;
+			swap_buffers();
+		}
 	}
 
 	@Override
