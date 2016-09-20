@@ -187,10 +187,10 @@ public class HenkakuPsvitaBackend extends Backend {
 				if (bmp.width == WIDTH && bmp.height == HEIGHT) {
 					writeInts(getCurrentBufferStart(), bmp.data, 0, bmp.area);
 				} else {
-					int minwidth = Math.min(bmp.width, 960);
-					int minheight = Math.min(bmp.height, 544);
+					int minwidth = Math.min(bmp.width, WIDTH);
+					int minheight = Math.min(bmp.height, HEIGHT);
 					for (int y = 0; y < minheight; y++) {
-						writeInts(getCurrentBufferStart() + (y * (minwidth * 4)), bmp.data, bmp.index(0, y), bmp.width);
+						writeInts(getCurrentBufferStart() + (y * (WIDTH * 4)), bmp.data, bmp.index(0, y), bmp.width);
 					}
 				}
 			}
@@ -300,8 +300,12 @@ public class HenkakuPsvitaBackend extends Backend {
 	}
 
 	@Override
-	protected byte[] readBytes(String path) throws IOException {
-		return JTranscIoTools.readFile(new File("app0:/" + path));
+	protected File getFileFromPath(String path) {
+		if (path.contains(":")) {
+			return new File(path);
+		} else {
+			return new File("app0:/" + path);
+		}
 	}
 
 	@Override

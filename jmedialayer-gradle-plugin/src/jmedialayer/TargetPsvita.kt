@@ -77,7 +77,10 @@ object TargetPsvita {
 			if (i.size == 0 && e.size == 0 && !p.isAlive) break
 			Thread.sleep(1L)
 		}
-		p.waitFor()
+		val exit = p.waitFor()
+		if (exit != 0) {
+			invalidOp("Process $exe exit with $exit")
+		}
 	}
 
 	fun apply(project: Project) {

@@ -51,6 +51,25 @@ public abstract class Bitmap {
 		}
 	}
 
+	public void copyPixels(Bitmap src, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY) {
+		final int this_width = this.width;
+		final int this_height = this.height;
+
+		Object srcData = src.getRawData();
+		Object dstData = this.getRawData();
+
+		int drawWidth = Math.max(0, Math.min(srcWidth, this.width - dstX));
+		//int drawHeight = Math.max(0, Math.min(srcHeight, this.height - dstY));
+
+		int left = clamp(dstX, 0, this_width);
+		//int right = clamp(dstX + width, 0, this_width);
+		for (int my = 0; my < srcHeight; my++) {
+			int row = dstY + my;
+			if (row < 0 || row >= this_height) continue;
+			System.arraycopy(srcData, src.index(srcX, srcY + my), dstData, index(left, row), drawWidth);
+		}
+	}
+
 	static protected int clamp(int v, int min, int max) {
 		if (v < min) return min;
 		if (v > max) return max;

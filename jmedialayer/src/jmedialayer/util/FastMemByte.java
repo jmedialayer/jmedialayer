@@ -53,6 +53,25 @@ public class FastMemByte {
 		memTMP[index] = (byte) value;
 	}
 
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "byte_memSRC[p0] = p1;")
+	static public void setSRC(int index, int value) {
+		memSRC[index] = (byte) value;
+	}
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "byte_memDST[p0] = p1;")
+	static public void setDST(int index, int value) {
+		memDST[index] = (byte) value;
+	}
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "byte_memTMP[p0] = p1;")
+	static public void setTMP(int index, int value) {
+		memTMP[index] = (byte) value;
+	}
+
 	/////////////////////////////////////////////////////////////////////////
 
 	@JTranscInline
@@ -71,5 +90,23 @@ public class FastMemByte {
 	@JTranscMethodBody(target = "cpp", value = "return byte_memTMP[p0];")
 	static public byte getTMP(int index) {
 		return memTMP[index];
+	}
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "return byte_memSRC[p0] & 0xFF;")
+	static public int getSRC_u(int index) {
+		return memSRC[index] & 0xFF;
+	}
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "return byte_memDST[p0] & 0xFF;")
+	static public int getDST_u(int index) {
+		return memDST[index] & 0xFF;
+	}
+
+	@JTranscInline
+	@JTranscMethodBody(target = "cpp", value = "return byte_memTMP[p0] & 0xFF;")
+	static public int getTMP_u(int index) {
+		return memTMP[index] & 0xFF;
 	}
 }

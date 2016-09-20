@@ -50,12 +50,12 @@ public class PNG extends ImageFormat {
 
 		ByteArrayOutputStream compressed = new ByteArrayOutputStream();
 
-		System.out.println("---");
+		//System.out.println("---");
 		mainloop:
 		while (s.getAvailable() > 0L) {
 			Chunk chunk = readChunk(s);
 			RAStream ss = new RAByteArray(chunk.data);
-			System.out.println(chunk.type);
+			//System.out.println(chunk.type);
 			switch (chunk.type) {
 				case "IHDR": {
 					h.width = ss.readS32_BE();

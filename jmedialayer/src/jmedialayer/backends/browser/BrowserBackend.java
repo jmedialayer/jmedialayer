@@ -138,9 +138,9 @@ public class BrowserBackend extends Backend {
 		Js.v_raw("var prev = Date.now();");
 		Js.v_raw("function one() {");
 		Js.v_raw("	var current = Date.now();");
-		//Js.v_raw("	_this['{% METHOD jmedialayer.backends.browser.BrowserBackend:clear_screen %}']();");
-		//Js.v_raw("	_this['{% METHOD jmedialayer.backends.browser.BrowserBackend:input_read %}']();");
+		Js.v_raw("	_this['{% METHOD jmedialayer.backends.browser.BrowserBackend:preStep %}']();");
 		Js.v_raw("	p0['{% METHOD jmedialayer.backends.Backend@StepHandler:step %}']((current - prev)|0);");
+		Js.v_raw("	_this['{% METHOD jmedialayer.backends.browser.BrowserBackend:postStep %}']();");
 		Js.v_raw("	prev = current;");
 		Js.v_raw("	requestAnimationFrame(one);");
 		Js.v_raw("};");

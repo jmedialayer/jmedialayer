@@ -12,4 +12,11 @@ public class ImageFormat {
 	public Bitmap read(byte[] data) throws IOException {
 		throw new RuntimeException();
 	}
+
+	static public class Info {
+		public String name;
+		public int bpp;
+		public int width;
+		public int height;
+	}
 }

@@ -4,7 +4,8 @@ import jmedialayer.graphics.Bitmap;
 
 public class ImageFormats {
 	static public ImageFormat[] formats = {
-		new PNG()
+		new PNG(),
+		new BMP()
 	};
 
 	static public boolean check(byte[] data) {
@@ -23,6 +24,6 @@ public class ImageFormats {
 				t.printStackTrace();
 			}
 		}
-		throw new RuntimeException("Can't decode image");
+		throw new RuntimeException("Can't decode image: Unknown image format");
 	}
 }

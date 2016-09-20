@@ -46,8 +46,8 @@ public class AwtBackend extends Backend {
 
 		frame.add(label);
 
-		frame.setSize(width, height);
-		//frame.pack();
+		//frame.setSize(width, height);
+		frame.pack();
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);

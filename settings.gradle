@@ -1,0 +1,3 @@
+rootProject.name = 'jmedialayer-base'
+
+include 'jmedialayer', 'jmedialayer-gradle-plugin'
