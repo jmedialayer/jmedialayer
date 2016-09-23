@@ -183,7 +183,7 @@ public class HenkakuPsvitaBackend extends Backend {
 		return new G1() {
 			@Override
 			public void updateBitmap(Bitmap32 bmp) {
-				updated = true;
+				updated = false;
 
 				//Cpp.v_raw("memset(fb[cur_fb].base, 0xFF, SCREEN_W*SCREEN_H*4);");
 				if (bmp.width == WIDTH && bmp.height == HEIGHT) {
@@ -238,17 +238,17 @@ public class HenkakuPsvitaBackend extends Backend {
 
 	@Override
 	protected void preStep() {
-		super.preStep();
 		input_read();
+		super.preStep();
 	}
 
-	private boolean updated = false;
+	private boolean updated = true;
 
 	@Override
 	protected void postStep() {
 		super.postStep();
-		if (updated) {
-			updated = false;
+		if (!updated) {
+			updated = true;
 			swap_buffers();
 		}
 	}

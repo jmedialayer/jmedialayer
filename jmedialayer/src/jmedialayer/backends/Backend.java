@@ -180,6 +180,7 @@ public class Backend {
 			final double start = JTranscSystem.fastTime();
 			final Timer[] timer = new Timer[1];
 			timer[0] = setIntervalStartingNow(16, new Runnable() {
+			//timer[0] = setIntervalStartingNow(100, new Runnable() {
 				@Override
 				public void run() {
 					final double current = JTranscSystem.fastTime();
